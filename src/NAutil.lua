@@ -73,9 +73,9 @@ function W_SetBinding(no, text, f)
     W_Log(4,"W_SetBinding error no: ".. no);
     return;
   end
-
+  W_Log(3,"W_SetBinding: "..text..key);
   if(f==1) then --spell
-    if(not SetBinding("key","SPELL "..text) == 1)then
+    if(not SetBinding(key,'SPELL '..text) == 1)then
       W_Log(3,"SetBindingSpell error : ".. key .."->"..text);
   end
   elseif(f==2) then --item
@@ -256,7 +256,7 @@ end
 function NA_FireSpell(spellID, UnitId)
   local spellInfo = NA_getSpellInfo(spellID);
   if(spellInfo ~= nil and spellInfo.keyNo ~= nil and (W_IsUsableSpell(spellID, UnitId) and W_UnitIsVisible(UnitId))) then
-    W_Log(2,"NA_FireSpell:" .. spellID .."->"..spellInfo.name..spellInfo.keyNo);
+    W_Log(3,"NA_FireSpell:" .. spellID .."->"..spellInfo.name..spellInfo.keyNo);
     W_UpdateLabelText('NA_SpellLabel', spellInfo.name);
     NA_ShowVars(spellInfo.keyNo);
     return true;
@@ -270,7 +270,7 @@ end
 function NA_FireItem(spellID, UnitId)
   local spellInfo = NA_getSpellInfo(spellID);
   if(spellInfo ~= nil and spellInfo.keyNo ~= nil and W_IsUsableItem(spellID, UnitId)) then
-    W_Log(2,"NA_FireItem:" .. spellID .."->"..spellInfo.keyNo);
+    W_Log(3,"NA_FireItem:" .. spellID .."->"..spellInfo.keyNo);
     W_UpdateLabelText('NA_SpellLabel', spellInfo.name);
     NA_ShowVars(spellInfo.keyNo);
     return true;
@@ -283,7 +283,7 @@ end
 function NA_FireMacro(spellID, UnitId)
   local spellInfo = NA_getSpellInfo(spellID);
   if(spellInfo ~= nil and spellInfo.keyNo ~= nil) then
-    W_Log(2,"NA_FireMacro:" .. spellID .."->"..spellInfo.keyNo);
+    W_Log(3,"NA_FireMacro:" .. spellID .."->"..spellInfo.keyNo);
     W_UpdateLabelText('NA_SpellLabel', spellInfo.spellID);
     NA_ShowVars(spellInfo.keyNo);
     return true;
@@ -311,15 +311,16 @@ function NA_targetSpell(buffs, spellID, UnitId, onlyMine)
 end
 
 function W_IsUsableSpell(spellID, UnitId)
-  local spellInfo = NA_getSpellInfo(spellID);
-  if(spellInfo == nil)then
-    return false;
-  end
-  local isUsable, nomana = IsUsableSpell(spellInfo.spellID);
-  if (isUsable == true and nomana == false and W_GetCooldown(1, spellID) <= 1) then
-    return W_InRange(spellInfo, UnitId);
-  end
-  return false;
+  return true;
+  -- local spellInfo = NA_getSpellInfo(spellID);
+  -- if(spellInfo == nil)then
+  --   return false;
+  -- end
+  -- local isUsable, nomana = IsUsableSpell(spellInfo.spellID);
+  -- if (isUsable == true and nomana == false and W_GetCooldown(1, spellID) <= 1) then
+  --   return W_InRange(spellInfo, UnitId);
+  -- end
+  -- return false;
 end
 
 function W_IsUsableItem(spellID, UnitId)

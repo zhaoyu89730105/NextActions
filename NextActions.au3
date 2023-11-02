@@ -9,14 +9,14 @@ Global Const $box_x = 0, $box_y = 0, $box_w = 16, $box_h = 16, $box_count = 1
 While 1
 	WinWaitActive("魔兽世界")
 	NAExecute()
-	sleep(100)
+	sleep(500)
 WEnd
 
 Func TogglePause()
     $Paused = NOT $Paused
 	Send('^!`')
     While $Paused
-        sleep(1000)
+        sleep(5000)
     WEnd
 EndFunc
 
@@ -63,7 +63,7 @@ Func NAExecute()
 
 	NAdebug($value[0])
 	Switch $value[0]
-	Case 1 To 9
+    Case 1 To 9
 		Send("^" & $value[0]);
 	Case 10
 		Send("^0");

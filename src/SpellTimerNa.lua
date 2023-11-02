@@ -25,8 +25,8 @@ function NA_Main_Frame_OnLoad()
   W_Log(3,"NA_OnLoad...");
   NA_init();
   this:SetBackdrop({
-    bgFile = "Interface\\Addons\\NextActions\\white16x16",
-    edgeFile = "Interface\\Addons\\NextActions\\white16x16",
+    bgFile = "Interface\\Addons\\SpellTimerNa\\white16x16",
+    edgeFile = "Interface\\Addons\\SpellTimerNa\\white16x16",
     tile = true, tileSize = 0, edgeSize = 1,
     insets = { left = 0, right = 0, top = 0, bottom = 0 }
   });
@@ -124,14 +124,14 @@ function NA_frame_set_color_hex(fname, hex)
   if (fname ~= nil and hex ~= nil) then
     local rhex, ghex, bhex = string.sub(hex, 3, 4), string.sub(hex, 5, 6), string.sub(hex, 7, 8);
     local frame = getglobal(fname);
-    W_Log(1,"NA_frame_set_color_hex=>"..tonumber(rhex, 16)/255 .."--".. tonumber(ghex, 16)/255 .."--".. tonumber(bhex, 16)/255);
+    W_Log(3,"NA_frame_set_color_hex=>"..tonumber(rhex, 16)/255 .."--".. tonumber(ghex, 16)/255 .."--".. tonumber(bhex, 16)/255);
     frame:SetBackdropColor(tonumber(rhex, 16)/255, tonumber(ghex, 16)/255, tonumber(bhex, 16)/255, 1);
   end
 end
 
 NA_PreVar = 0;
 function NA_ShowVars(v1)
-  W_Log(1, "NA_ShowVars=>" ..v1 .."--"..NAParseValue2Color(v1));
+  W_Log(3, "NA_ShowVars=>" ..v1 .."--"..NAParseValue2Color(v1));
   if(NA_PreVar == v1)then
     return;
   else
@@ -150,6 +150,13 @@ end
 
 function NAParseValue2Color(value)
   local g,s,b=0,0,0;
+  g = math.mod(value, 10);
+  if value>=10 then
+    s = math.mod(value-g, 100)/10;
+  end
+  if value>=100 then
+    b = math.mod(value-g-s*10, 1000)/100;
+  end
   return "0x" .. b .. '8' .. s .. '8' .. g .. '8';
 end
 
