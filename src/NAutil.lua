@@ -75,17 +75,17 @@ function W_SetBinding(no, text, f)
   end
   W_Log(3,"W_SetBinding: "..text..key);
   if(f==1) then --spell
-    if(not SetBinding(key,'SPELL '..text) == 1)then
+    --if(not SetBinding(key,'SPELL '..text) == 1)then
       W_Log(3,"SetBindingSpell error : ".. key .."->"..text);
-  end
+  --end
   elseif(f==2) then --item
-    if(not SetBindingItem(key, 'item:'..text) == 1)then
+   -- if(not SetBindingItem(key, 'item:'..text) == 1)then
       W_Log(4,"SetBindingItem error : ".. key .."->"..text);
-  end
+  --end
   elseif(f==3) then --macro
-    if(not SetBinding(key, 'MACRO '..text) == 1)then
+   -- if(not SetBinding(key, 'MACRO '..text) == 1)then
       W_Log(4,"SetBindingMacro error : ".. key .."->"..text);
-  end
+  --end
   else
     W_Log(4,"W_SetBinding error type: ".. f);
     return;
