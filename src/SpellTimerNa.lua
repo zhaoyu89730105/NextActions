@@ -1,6 +1,5 @@
 -- Author      : watano
 -- Create Date : 8/16/2009 7:36:35 PM
-
 function NA_Main_Frame_OnLoad()
   this:RegisterEvent("COMBAT_LOG_EVENT");
   this:RegisterEvent("CURRENT_SPELL_CAST_CHANGED");
@@ -44,13 +43,13 @@ function NA_Option_Frame_OnLoad()
   local frameProfile = W_createNCBtn("cbtnNA_Profile", NA_ProfileSize, this,"P:", top, left);
 
   for i=0,NA_ProfileSize-1 do
-    local btnProfile = getglobal("cbtnNA_Profile"..i);
+		local btnProfile = getglobal("cbtnNA_Profile"..i);
     btnProfile:SetScript("OnClick",
       function(self, button, down)
         NA_Option_Frame_Update();
       end
     );
-    W_SetTooltip(btnProfile, NA_ProfileNames[i], NA_ProfileDescriptions[i]);
+		W_SetTooltip(btnProfile, NA_ProfileNames[i], NA_ProfileDescriptions[i]);
   end
   NA_Option_Frame_Update();
   top = top - frameProfile:GetHeight();
@@ -64,7 +63,7 @@ function NA_Option_Frame_OnLoad()
       end
     end
   );
-  W_SetTooltip(getglobal("cbtnNA_Flag"..0), "AOE", "A怪模式");
+	W_SetTooltip(getglobal("cbtnNA_Flag"..0), "AOE", "A怪模式");
 
   getglobal("cbtnNA_Flag"..1):SetScript("OnClick",
     function(self, button, down)
@@ -74,7 +73,7 @@ function NA_Option_Frame_OnLoad()
       end
     end
   );
-  W_SetTooltip(getglobal("cbtnNA_Flag"..1), "Max DPS", "最大化输出,使用长CD技能");
+	W_SetTooltip(getglobal("cbtnNA_Flag"..1), "Max DPS", "最大化输出,使用长CD技能");
 
   getglobal("cbtnNA_Flag"..2):SetScript("OnClick",
     function(self, button, down)
@@ -84,7 +83,7 @@ function NA_Option_Frame_OnLoad()
       end
     end
   );
-  W_SetTooltip(getglobal("cbtnNA_Flag"..2), "SOLO", "单刷模式,使用短CD技能,自动开怪,不嘲讽");
+	W_SetTooltip(getglobal("cbtnNA_Flag"..2), "SOLO", "单刷模式,使用短CD技能,自动开怪,不嘲讽");
   --top = top - frameFlag:GetHeight();
 
   local spellLabel = this:CreateFontString("NA_SpellLabel","OVERLAY","GameFontNormal");
@@ -189,7 +188,4 @@ function BigFoot_OnUpdate(elapsed)
          end 
      end
 end
--- /script NA_ShowVars(2);
-
-
 -- /script NA_ShowVars(2);
