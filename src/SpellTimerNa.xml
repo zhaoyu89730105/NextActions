@@ -1,5 +1,5 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ..\FrameXML\UI.xsd">	
-                <Frame name="BigFootFrame" parent="UIParent" hidden="true"/>	
+    <Frame name="BigFootFrame" parent="UIParent" hidden="true"/>
 	<Script file="SpellTimerNa.lua" />
 	<Frame name="NA_Main_Frame" alpha="1" toplevel="true" frameStrata="HIGH" parent="UIParent" movable="false"
 		hidden="false">
@@ -13,15 +13,15 @@
 	<Frame name="NA_Option_Frame" alpha="1" toplevel="false" frameStrata="HIGH"
 		hidden="false" enableMouse="true" movable="true" parent="UIParent" clampedToScreen="true">
 		<Scripts>
-			<OnLoad>NA_Option_Frame_OnLoad(self);</OnLoad>
+			<OnLoad>NA_Option_Frame_OnLoad();</OnLoad>
 			<OnMouseDown>
-				if (button == "LeftButton" ) then self:StartMoving(); self.IsMoving=true; end
+				if (button == "LeftButton" ) then this:StartMoving(); this.IsMoving=true; end
 			</OnMouseDown>
 			<OnMouseUp>
-				if (self.IsMoving) then self:StopMovingOrSizing(); self.IsMoving=false; end
+				if (this.IsMoving) then this:StopMovingOrSizing(); this.IsMoving=false; end
 			</OnMouseUp>
 			<OnHide>
-				if (self.IsMoving) then self:StopMovingOrSizing(); self.IsMoving=false; end
+				if (this.IsMoving) then this:StopMovingOrSizing(); this.IsMoving=false; end
 			</OnHide> 
 	   	  
 	                               <OnUpdate>
@@ -30,7 +30,7 @@
 	   
 		</Scripts>
 		<Size><AbsDimension x="120" y="150"/></Size>
-		<Anchors><Anchor point="CENTER"/></Anchors>
+		<Anchors><Anchor point="LEFT"/></Anchors>
         <Backdrop edgeFile="Interface\Tooltips\UI-Tooltip-Border"
             bgFile="Interface\Tooltips\UI-Tooltip-Background">
             <BackgroundInsets><AbsInset left="4" right="4" top="4" bottom="4"/></BackgroundInsets>
@@ -48,5 +48,5 @@
 			</Layer>
 		</Layers>
 	</Frame>
-
+    
 </Ui>

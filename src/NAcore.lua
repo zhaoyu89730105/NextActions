@@ -25,9 +25,9 @@ function NA_init()
 
   NA_InitProfile(NA_Config.NA_ProfileNo);
 
-  SLASH_NEXTACTIONS1 = "/nextactions"
-  SLASH_NEXTACTIONS2 = "/na"
-  SlashCmdList["NEXTACTIONS"] = NA_SlashHandler;
+  SLASH_NEXTACTIONS1 = "/SpellTimerNa"
+  SLASH_NEXTACTIONS2 = "/Na"
+  SlashCmdList["SpellTimerNa"] = NA_SlashHandler;
 end
 
 function NA_initClassData(className, profileNo)
@@ -151,13 +151,17 @@ function NA_InitClass()
       if(spellInfoType == 1) then
         local name, rank, icon, castTime, minRange, maxRange;
         name, rank = GetSpellName(tonumber(v), BOOKTYPE_SPELL);
-       W_Log(3,"NA_InitClass: "..name);
+        local NameOfSpell;
+       
+        NameOfSpell = name
+        
+        W_Log(3,"NA_InitClass: "..name.."("..rank..")");
         if(name == nil) then
           W_Log(3,"GetSpellInfo error: ".. k);
         else
           NA_ClassInfo[v] = {};
           NA_ClassInfo[v]['spellID'] = tonumber(v);
-          NA_ClassInfo[v]['name'] = name;
+          NA_ClassInfo[v]['name'] = NameOfSpell;
           NA_ClassInfo[v]['rank'] = rank;
           W_Log(1,"NA_ClassInfo["..k.."]: ".. name);
           NA_ClassInfo[v]['keyNo'] = no;
@@ -186,7 +190,6 @@ function NA_InitClass()
   if(not W_IsInCombat())then
     SaveBindings(2);
   end
-
   W_Log(2, "NA_InitClass ok!");
 end
 
@@ -194,10 +197,10 @@ function NA_Toggle()
   if(NA_IsRunning) then
     NA_IsRunning = false;
     NA_ClearAction();
-    W_Log(2,"NextActions stop for "..NA_ProfileNo);
+    W_Log(3,"NextActions stop for"..NA_ProfileNo);
   else
     NA_IsRunning = true;
-    W_Log(2,"NextActions start "..NA_ProfileNo);
+    W_Log(3,"NextActions start "..NA_ProfileNo);
   end
   return NA_IsRunning;
 end
@@ -254,21 +257,19 @@ function NA_SlashHandler(msg)
   end
 end
 
-function NA_OnEvent(event,...)
+function NA_OnEvent(event)
   W_Log(3,"NA_OnEvent start");
-  if(event == 'UNIT_SPELLCAST_SUCCEEDED')then
-    local unit, spellname, spellrank = '...';
-    if(unit == NA_Player)then
-      NA_UpdateSpellTime(spellname, spellrank);
-    end
-  end
   if(event == "ADDON_LOADED")then
     if(not W_IsInCombat() and NA_Config.NA_MyUI == true)then
       NA_MyUI();
     end
   end
-
+  if(NA_IsRunning ~= nil and NA_IsRunning == false) then
+    W_Log(3,"NA_IsRunning.....");
+  end
+  
   if(NA_IsRunning ~= nil and NA_IsRunning == true and not NA_DoAction()) then
+     W_Log(3,"NA_ClearActions.....");
     NA_ClearAction();
   end
   W_Log(3,"NA_OnEvent end");
@@ -285,14 +286,14 @@ function NA_UpdateSpellTime(spellname, spellrank)
 end
 
 function NA_DoAction()
-  if(UnitIsDead(NA_Player) or W_IsCasting(NA_Player) > 0.9
-    or W_HasBuff(NA_Player, 1133) or W_HasBuff(NA_Player, 1131) or SpellIsTargeting()
-    or (IsMounted() and not W_HasBuff(NA_Player, 165803)) or IsFlying()
-    or (UnitInVehicle(NA_Player) and UnitExists(NA_Pet) == 1 and strfind(UnitName(NA_Pet), '训练中') == nil)) then
-    W_Log(1,"busy.....");
+  W_Log(3,"NA_DoAction.....");
+  if(UnitIsDead(NA_Player)
+    or W_HasBuff(NA_Player, 1133) or W_HasBuff(NA_Player, 1131) or SpellIsTargeting()) then
+    W_Log(3,"busy.....");
     return false;
   end
 
+  W_Log(3,"NA_MaxDps.....");
   if(NA_MaxDps())then
     UIErrorsFrame:Clear();
     return true;
