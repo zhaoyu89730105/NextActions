@@ -15,7 +15,7 @@ NA_IsSolo = false;
 NA_SpellTimes = {};
 NA_ProfileNames = {};
 NA_ProfileDescriptions = {};
-
+NA_TestRange = {}
 
 function NA_init()
   if(NA_Config == nil)then
@@ -81,6 +81,7 @@ function NA_initClassData(className, profileNo)
     NA_MaxDps = NA8Dps;
     NA_ProfileNames = NA8ProfileNames;
     NA_ProfileDescriptions = NA8ProfileDescriptions;
+    NA_TestRange = NA8TestRange;
   elseif(className == "WARLOCK") then
     NA_Actions = getNA9Actions(profileNo);
     NA_ProfileName = NA9ProfileNames[profileNo];
@@ -153,16 +154,25 @@ function NA_InitClass()
         name, rank = GetSpellName(tonumber(v), BOOKTYPE_SPELL);
         local NameOfSpell;
        
-        NameOfSpell = name
-        
+        nameOfSpell = name
         W_Log(3,"NA_InitClass: "..name.."("..rank..")");
+        local spellTexture = GetSpellTexture(tonumber(v), BOOKTYPE_SPELL);
+        local spellslot = nil;
+        for slot = 1, 120 do
+          local thisTexture = GetActionTexture(slot)
+          if (thisTexture == spellTexture) then
+            spellslot = slot;
+            break
+          end
+        end
         if(name == nil) then
           W_Log(3,"GetSpellInfo error: ".. k);
         else
           NA_ClassInfo[v] = {};
           NA_ClassInfo[v]['spellID'] = tonumber(v);
-          NA_ClassInfo[v]['name'] = NameOfSpell;
+          NA_ClassInfo[v]['name'] = nameOfSpell;
           NA_ClassInfo[v]['rank'] = rank;
+          NA_ClassInfo[v]['slot'] = spellslot;
           W_Log(1,"NA_ClassInfo["..k.."]: ".. name);
           NA_ClassInfo[v]['keyNo'] = no;
           W_SetBinding(no, NA_ClassInfo[v].name, 1);
@@ -172,12 +182,14 @@ function NA_InitClass()
         NA_ClassInfo[v] = {};
         NA_ClassInfo[v]['spellID'] = name;
         NA_ClassInfo[v]['keyNo'] = no;
+        NA_ClassInfo[v]['slot'] = spellslot;
         W_SetBinding(no, name, 2);
       elseif(spellInfoType == 3)then --Macro
         local name = strsub(v,1,strlen(v))
         NA_ClassInfo[v] = {};
         NA_ClassInfo[v]['spellID'] = name;
         NA_ClassInfo[v]['keyNo'] = no;
+        NA_ClassInfo[v]['slot'] = spellslot;
         W_SetBinding(no, name, 3);
       elseif(spellInfoType == 4)then --Function
       else
@@ -187,6 +199,10 @@ function NA_InitClass()
   end
 
   W_Log(3, W_toString(NA_ClassInfo))
+
+
+
+
   if(not W_IsInCombat())then
     SaveBindings(2);
   end
@@ -258,8 +274,15 @@ function NA_SlashHandler(msg)
 end
 
 function NA_OnEvent(event)
-  W_Log(3,"NA_OnEvent start");
-  if(event == "ADDON_LOADED")then
+  W_Log(3,"NA_OnEvent start"..event);
+  if(event == "SPELLCAST_FAILED")then
+    local spellID = NA_TestRange[NA_ProfileNo];
+    if (spellID ~= nil) then
+       if(NA_ChangeDirection(spellID, NA_Target)) then
+        return;
+       end 
+    end    
+  elseif(event == "ADDON_LOADED")then
     if(not W_IsInCombat() and NA_Config.NA_MyUI == true)then
       NA_MyUI();
     end

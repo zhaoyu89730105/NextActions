@@ -2,25 +2,21 @@
 -- Create Date : 8/16/2009 7:36:35 PM
 function NA_Main_Frame_OnLoad()
   this:RegisterEvent("COMBAT_LOG_EVENT");
-  this:RegisterEvent("CURRENT_SPELL_CAST_CHANGED");
   this:RegisterEvent("PLAYER_FARSIGHT_FOCUS_CHANGED");
   this:RegisterEvent("PLAYER_TARGET_CHANGED");
   this:RegisterEvent("SPELLS_CHANGED");
-  this:RegisterEvent("SPELL_UPDATE_COOLDOWN");
-  this:RegisterEvent("SPELL_UPDATE_USABLE");
   this:RegisterEvent("UNIT_AURA");
   this:RegisterEvent("UNIT_AURASTATE");
-  this:RegisterEvent("UNIT_SPELLCAST_DELAYED");
-  this:RegisterEvent("UNIT_SPELLCAST_FAILED");
-  this:RegisterEvent("UNIT_SPELLCAST_FAILED_QUIET");
-  this:RegisterEvent("UNIT_SPELLCAST_INTERRUPTED");
-  this:RegisterEvent("UNIT_SPELLCAST_SENT");
-  this:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED");
   this:RegisterEvent("ADDON_LOADED");
   this:RegisterEvent("COMBAT_TEXT_UPDATE");
   this:RegisterEvent("PLAYER_DEAD");
+  this:RegisterEvent("PLAYER_TARGET_DEAD");
   this:RegisterEvent("PLAYER_ENTERING_WORLD");
   this:RegisterEvent("PLAYER_LOGIN");
+  this:RegisterEvent("SPELLCAST_STOP")
+  this:RegisterEvent("SPELLCAST_FAILED")
+  this:RegisterEvent("SPELLCAST_INTERRUPTED")
+  this:RegisterEvent("SPELLCAST_DELAYED")
 
   W_Log(3,"NA_OnLoad...");
   NA_init();
@@ -124,7 +120,7 @@ function NA_frame_set_color_hex(fname, hex)
   if (fname ~= nil and hex ~= nil) then
     local rhex, ghex, bhex = string.sub(hex, 3, 4), string.sub(hex, 5, 6), string.sub(hex, 7, 8);
     local frame = getglobal(fname);
-    W_Log(3,"NA_frame_set_color_hex=>"..tonumber(rhex, 16)/255 .."--".. tonumber(ghex, 16)/255 .."--".. tonumber(bhex, 16)/255);
+    W_Log(2,"NA_frame_set_color_hex=>"..tonumber(rhex, 16)/255 .."--".. tonumber(ghex, 16)/255 .."--".. tonumber(bhex, 16)/255);
     frame:SetBackdropColor(tonumber(rhex, 16)/255, tonumber(ghex, 16)/255, tonumber(bhex, 16)/255, 1);
   end
 end

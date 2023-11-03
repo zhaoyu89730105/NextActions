@@ -68,9 +68,9 @@ Func NAExecute()
 	Case 10
 		Send("^0");
 	Case 11
-		Send("^-");
+		Send("^【");
 	Case 12
-		Send("^=");
+		Send("^】");
 	Case 13 To 21
 		Send("^!" & ($value[0]-12));ctrl+1
 	Case 22
@@ -87,7 +87,35 @@ Func NAExecute()
 		Send("+-");
 	Case 35
 		Send("+=");
-	Case 100	;NA_PetAttack() 
+	Case 41
+		Send("^-");
+		sleep(15000)
+		Send("^/");
+		sleep(1100)
+		Send("{TAB}");
+	Case 42
+		Send("^=");
+		sleep(15000)
+		Send("^/");
+		sleep(1100)
+		Send("{TAB}");
+	Case 43
+		Send("^-");
+		sleep(1100)
+		Send("^=");
+		sleep(15000)
+		Send("^/");
+		sleep(1100)
+		Send("{TAB}");
+	Case 44
+		Send("{TAB}");	
+		sleep(1100)
+	Case 45
+		Send("^a")	
+		sleep(200)
+		Send("^1");
+	Case 100	
+		NA_PetAttack() 
 		Send("+T");
 	Case 101    ;tab
 		Send("{TAB}");

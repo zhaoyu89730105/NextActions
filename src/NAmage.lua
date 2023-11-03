@@ -14,42 +14,41 @@ NA8ProfileNames = {[0]='Arcane',[1]='Frost',[2]='Fire',};
 NA8ProfileDescriptions = {[0]='天赋:--属性:',[1]='天赋:--属性:',[2]='天赋:--属性:',};
 
 function NA8Dps()
-  W_Log(1,"法师 dps");
+  W_Log(3,"法师 dps");
   
-	
-	
-	
   if(W_IsInCombat())then
+    W_Log(3,"法师 W_IsInCombat");
     if(NA_ProfileNo < 0)then return false; --保命施法
     elseif(NA_ProfileNo == 0)then --Arcane
       
       if(false
-
+           or NA_Fire(true, '10', NA_Target) --火球术
+           or NA_ChangeTarget(NA_Target) --换目标
       )then return true; end
     elseif(NA_ProfileNo == 1)then --Frost
       
       if(false
-					or NA_Fire(W_HPlevel(NA_Player) < 0.9, '9', NA_Player) --寒甲术
+					or NA_Fire(true, '10', NA_Target) --火球术
 					
       )then return true; end
     elseif(NA_ProfileNo == 2)then --Fire
       
       if(false					
-					or NA_Fire(W_HPlevel(NA_Player) < 0.9, '9', NA_Player) --寒甲术
+					 or NA_Fire(true, '10', NA_Target) --火球术
 					
 
       )then return true; end
 
     end
     if(W_TargetCanAttack()) then  --攻击施法
+      W_Log(3,"法师 W_TargetCanAttack");
       if(NA_ProfileNo < 0)then return false;
       elseif(NA_ProfileNo == 0)then --Arcane
-        
-				
         
         if(not NA_IsAOE and (false			
 					
 					or NA_Fire(true, '10', NA_Target) --火球术
+          or NA_ChangeTarget(NA_Target) --换目标
 
         ))then return true; end
 
@@ -58,9 +57,6 @@ function NA8Dps()
         ))then return true; end
       elseif(NA_ProfileNo == 1)then --Frost
 				
-				
-				
-        
         if(not NA_IsAOE and (false
 
 					or NA_Fire(true, '10', NA_Target) --火球术
@@ -107,19 +103,21 @@ function NA8Dps()
       end
     end
   else  --不在战斗中
+    W_Log(3,"脱战后补buff，开怪等");
     if(NA_ProfileNo < 0)then return false; --脱战后补buff，开怪等
     elseif(NA_ProfileNo == 0)then --Arcane
       
       if(false
-
+          or NA_Eat(true)
 					or NA_Fire(W_HPlevel(NA_Player) < 0.9, '9', NA_Player) --寒甲术
 					or NA_Fire(true, '10', NA_Target) --火球术
+          or NA_ChangeTarget(NA_Target) --换目标
 
       )then return true; end
     elseif(NA_ProfileNo == 1)then --Frost
       
       if(false
-
+          or NA_Eat(true)
 					or NA_Fire(W_HPlevel(NA_Player) < 0.9, '9', NA_Player) --寒甲术
 					or NA_Fire(true, '10', NA_Target) --火球术
 
@@ -127,9 +125,9 @@ function NA8Dps()
     elseif(NA_ProfileNo == 2)then --Fire
       
       if(false
-
+          or NA_Eat(true)
       )then return true; end
-    end
+    end  
   end
   return false;
 end
