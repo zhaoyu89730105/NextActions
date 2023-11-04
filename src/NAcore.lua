@@ -15,7 +15,7 @@ NA_IsSolo = false;
 NA_SpellTimes = {};
 NA_ProfileNames = {};
 NA_ProfileDescriptions = {};
-NA_TestRange = {}
+NA_TestRangeSpellID = nil;
 
 function NA_init()
   if(NA_Config == nil)then
@@ -81,7 +81,7 @@ function NA_initClassData(className, profileNo)
     NA_MaxDps = NA8Dps;
     NA_ProfileNames = NA8ProfileNames;
     NA_ProfileDescriptions = NA8ProfileDescriptions;
-    NA_TestRange = NA8TestRange;
+    NA_TestRangeSpellID = NA8TestRange[profileNo];
   elseif(className == "WARLOCK") then
     NA_Actions = getNA9Actions(profileNo);
     NA_ProfileName = NA9ProfileNames[profileNo];
@@ -275,13 +275,15 @@ end
 
 function NA_OnEvent(event)
   W_Log(3,"NA_OnEvent start"..event);
-  if(event == "SPELLCAST_FAILED")then
-    local spellID = NA_TestRange[NA_ProfileNo];
+  if(event == "SPELLCAST_FAILED" or event == "SPELLCAST_STOP" or event == "SPELLCAST_INTERRUPTED")then
+    local spellID = NA_TestRangeSpellID;
+    W_Log(3,"NA_ChangeDirection----"..spellID);
     if (spellID ~= nil) then
        if(NA_ChangeDirection(spellID, NA_Target)) then
         return;
        end 
-    end    
+    end
+        
   elseif(event == "ADDON_LOADED")then
     if(not W_IsInCombat() and NA_Config.NA_MyUI == true)then
       NA_MyUI();
@@ -293,7 +295,7 @@ function NA_OnEvent(event)
   
   if(NA_IsRunning ~= nil and NA_IsRunning == true and not NA_DoAction()) then
      W_Log(3,"NA_ClearActions.....");
-    NA_ClearAction();
+    --NA_ClearAction();
   end
   W_Log(3,"NA_OnEvent end");
 end
@@ -315,8 +317,6 @@ function NA_DoAction()
     W_Log(3,"busy.....");
     return false;
   end
-
-  W_Log(3,"NA_MaxDps.....");
   if(NA_MaxDps())then
     UIErrorsFrame:Clear();
     return true;

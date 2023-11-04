@@ -12,10 +12,8 @@ end
 
 NA8ProfileNames = {[0]='Arcane',[1]='Frost',[2]='Fire',};
 NA8ProfileDescriptions = {[0]='天赋:--属性:',[1]='天赋:--属性:',[2]='天赋:--属性:',};
-
-function NA8Dps()
-  W_Log(3,"法师 dps");
-  
+NA8TestRange =  {[0]='10',[1]='10',[2]='10',};
+function NA8Dps()  
   if(W_IsInCombat())then
     W_Log(3,"法师 W_IsInCombat");
     if(NA_ProfileNo < 0)then return false; --保命施法

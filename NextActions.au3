@@ -109,11 +109,19 @@ Func NAExecute()
 		Send("{TAB}");
 	Case 44
 		Send("{TAB}");	
-		sleep(1100)
 	Case 45
 		Send("^a")	
+		Send("^a")
+		Send("^a")
+		Send("^a")
+		Send("^a")
+		Send("^a")	
+		Send("^a")
+		Send("^a")
+		Send("^a")
+		Send("^a")
 		sleep(200)
-		Send("^1");
+		Send("^2");
 	Case 100	
 		NA_PetAttack() 
 		Send("+T");

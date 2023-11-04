@@ -269,22 +269,20 @@ end
 
 function NA_ChangeDirection(spellID, UnitId)
   W_Log(3,"NA_ChangeDirection----start");
-  if (not W_UnitIsVisible(UnitId) or UnitIsDead(UnitId)) then
-    W_Log(3,"NA_ChangeDirection----start");
+  if (not W_UnitIsVisible(UnitId) or UnitIsDead(UnitId) or not UnitCanAttack(NA_Player,NA_Target) or UnitIsPlayer(NA_Target)) then
     NA_ShowVars(44);
     return true;
   elseif (W_UnitIsVisible(UnitId)) then
     local spellInfo = NA_getSpellInfo(spellID);
     if(spellInfo ~= nil) then 
       local slot = spellInfo.slot;
-      W_Log(3,"NA_ChangeDirection----start"..slot);
       if (slot ~= nil) then
         if (IsActionInRange(slot) == 1) then
-          W_Log(3,"NA_ChangeDirection----start"..slot);
+          W_Log(3,"NA_ChangeDirectio4n----start"..slot);
           NA_ToLeft();          
           return true;
         elseif(IsActionInRange(slot) == 0) then
-          W_Log(3,"NA_ChangeDirection----start"..slot);
+          W_Log(3,"NA_ChangeDirection5----start"..slot);
           NA_ShowVars(44);
           return true;
         end 
@@ -297,7 +295,7 @@ end
 
 function NA_ChangeTarget(UnitId)
   W_Log(3,"NA_ChangeTarget----start");
-  if (not W_UnitIsVisible(UnitId) or UnitIsDead(UnitId)) then
+  if (not UnitCanAttack(NA_Player,NA_Target) and (W_UnitIsVisible(UnitId) or UnitIsDead(UnitId))) then
     W_Log(3,"NA_ChangeTarget2----start");
     NA_ShowVars(44);
     return true;
