@@ -64,13 +64,13 @@ Func NAExecute()
 	NAdebug($value[0])
 	Switch $value[0]
     Case 1 To 9
-		Send("^" & $value[0]);
+		Send($value[0]);
 	Case 10
-		Send("^0");
+		Send("0");
 	Case 11
-		Send("^【");
+		Send("【");
 	Case 12
-		Send("^】");
+		Send("】");
 	Case 13 To 21
 		Send("^!" & ($value[0]-12));ctrl+1
 	Case 22
@@ -88,42 +88,54 @@ Func NAExecute()
 	Case 35
 		Send("+=");
 	Case 41
-		Send("^-");
+		Send("-");
 		sleep(15000)
 		Send("^/");
 		sleep(1100)
 		Send("{TAB}");
 	Case 42
-		Send("^=");
+		Send("=");
 		sleep(15000)
 		Send("^/");
 		sleep(1100)
 		Send("{TAB}");
 	Case 43
-		Send("^-");
+		Send("-");
 		sleep(1100)
-		Send("^=");
+		Send("=");
 		sleep(15000)
 		Send("^/");
 		sleep(1100)
 		Send("{TAB}");
 	Case 44
+	    Send("a");	
+		Send("a");
+		Send("a");
+		Send("a");
+		Send("a");
+		Send("a");	
+		Send("a");
+		Send("a");
+		Send("a");
+		Send("a");
+		MouseClick("right")
+		sleep(200);
 		Send("{TAB}");	
 	Case 45
-		Send("^a")	
-		Send("^a")
-		Send("^a")
-		Send("^a")
-		Send("^a")
-		Send("^a")	
-		Send("^a")
-		Send("^a")
-		Send("^a")
-		Send("^a")
-		sleep(200)
-		Send("^2");
+		Send("a");
+		Send("a");
+		Send("a");
+		Send("a");
+		Send("a");
+		Send("a");
+		Send("a");
+		Send("a");
+		Send("a");
+		Send("a");
+        MouseClick("right")
+		sleep(200);
+		Send("3");
 	Case 100	
-		NA_PetAttack() 
 		Send("+T");
 	Case 101    ;tab
 		Send("{TAB}");

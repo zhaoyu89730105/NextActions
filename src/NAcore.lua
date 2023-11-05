@@ -82,6 +82,7 @@ function NA_initClassData(className, profileNo)
     NA_ProfileNames = NA8ProfileNames;
     NA_ProfileDescriptions = NA8ProfileDescriptions;
     NA_TestRangeSpellID = NA8TestRange[profileNo];
+    NA_Mana = true;
   elseif(className == "WARLOCK") then
     NA_Actions = getNA9Actions(profileNo);
     NA_ProfileName = NA9ProfileNames[profileNo];
@@ -147,62 +148,48 @@ function NA_InitClass()
   local no=0;
   for k,v in pairs(NA_Actions) do
     if(v ~= nil)then
-      local spellInfoType = NA_SpellInfoType(v);
-      no = no + 1;
-      if(spellInfoType == 1) then
-        local name, rank, icon, castTime, minRange, maxRange;
-        name, rank = GetSpellName(tonumber(v), BOOKTYPE_SPELL);
-        local NameOfSpell;
-       
-        nameOfSpell = name
-        W_Log(3,"NA_InitClass: "..name.."("..rank..")");
-        local spellTexture = GetSpellTexture(tonumber(v), BOOKTYPE_SPELL);
-        local spellslot = nil;
-        for slot = 1, 120 do
-          local thisTexture = GetActionTexture(slot)
-          if (thisTexture == spellTexture) then
-            spellslot = slot;
-            break
-          end
+      local spellID, rank, tmpRankNum;
+      for i = 1, GetNumSpellTabs(), 1 do
+        local name, texture, offset, numSpells = GetSpellTabInfo(i);
+        for y = 1, numSpells, 1 do
+          local spellName, tmpRankName = GetSpellName(offset+y, BOOKTYPE_SPELL);
+          if (tmpRankName ~= nil) then
+            local tmpRank = string.find(tmpRankName, "(%d+)");
+            if (spellName == v and tmpRank ~=nil and (rank == nil  or rank < tonumber(tmpRank))) then
+              spellID = y+offset;
+              rank = tonumber(tmpRank);
+              tmpRankNum = tmpRank;
+            end
+          end  
+        end        
+      end
+
+      W_Log(2,"NA_InitClass: "..v.."("..rank..")"..spellID);
+      local spellTexture = GetSpellTexture(spellID, BOOKTYPE_SPELL);
+      local spellslot = nil;
+      for slot = 1, 120 do
+        local thisTexture = GetActionTexture(slot)
+        if (thisTexture == spellTexture) then
+          spellslot = slot;
+          break
         end
-        if(name == nil) then
+      end
+      no = no + 1
+      if(spellID == nil) then
           W_Log(3,"GetSpellInfo error: ".. k);
-        else
-          NA_ClassInfo[v] = {};
-          NA_ClassInfo[v]['spellID'] = tonumber(v);
-          NA_ClassInfo[v]['name'] = nameOfSpell;
-          NA_ClassInfo[v]['rank'] = rank;
-          NA_ClassInfo[v]['slot'] = spellslot;
-          W_Log(1,"NA_ClassInfo["..k.."]: ".. name);
-          NA_ClassInfo[v]['keyNo'] = no;
-          W_SetBinding(no, NA_ClassInfo[v].name, 1);
-        end
-      elseif(spellInfoType == 2)then --Item
-        local name = strsub(v,1,strlen(v))
-        NA_ClassInfo[v] = {};
-        NA_ClassInfo[v]['spellID'] = name;
-        NA_ClassInfo[v]['keyNo'] = no;
-        NA_ClassInfo[v]['slot'] = spellslot;
-        W_SetBinding(no, name, 2);
-      elseif(spellInfoType == 3)then --Macro
-        local name = strsub(v,1,strlen(v))
-        NA_ClassInfo[v] = {};
-        NA_ClassInfo[v]['spellID'] = name;
-        NA_ClassInfo[v]['keyNo'] = no;
-        NA_ClassInfo[v]['slot'] = spellslot;
-        W_SetBinding(no, name, 3);
-      elseif(spellInfoType == 4)then --Function
       else
-        W_Log(4,"unkonw action: ".. v);
+        NA_ClassInfo[v] = {};
+        NA_ClassInfo[v]['spellID'] = spellID;
+        NA_ClassInfo[v]['name'] = v;
+        NA_ClassInfo[v]['rank'] = rank;
+        NA_ClassInfo[v]['slot'] = spellslot;
+        NA_ClassInfo[v]['keyNo'] = no;
+        W_SetBinding(no, NA_ClassInfo[v].name, 1);
       end
     end
   end
 
   W_Log(3, W_toString(NA_ClassInfo))
-
-
-
-
   if(not W_IsInCombat())then
     SaveBindings(2);
   end
@@ -275,11 +262,10 @@ end
 
 function NA_OnEvent(event)
   W_Log(3,"NA_OnEvent start"..event);
-  if(event == "SPELLCAST_FAILED" or event == "SPELLCAST_STOP" or event == "SPELLCAST_INTERRUPTED")then
-    local spellID = NA_TestRangeSpellID;
-    W_Log(3,"NA_ChangeDirection----"..spellID);
-    if (spellID ~= nil) then
-       if(NA_ChangeDirection(spellID, NA_Target)) then
+  if(event == "SPELLCAST_FAILED")then
+    local spellName = NA_TestRangeSpellID;
+    if (spellName ~= nil) then
+       if(NA_ChangeDirection(spellName, NA_Target)) then
         return;
        end 
     end
@@ -297,7 +283,7 @@ function NA_OnEvent(event)
      W_Log(3,"NA_ClearActions.....");
     --NA_ClearAction();
   end
-  W_Log(3,"NA_OnEvent end");
+  W_Log(2,"NA_OnEvent end");
 end
 
 function NA_UpdateSpellTime(spellname, spellrank)
@@ -311,9 +297,8 @@ function NA_UpdateSpellTime(spellname, spellrank)
 end
 
 function NA_DoAction()
-  W_Log(3,"NA_DoAction.....");
-  if(UnitIsDead(NA_Player)
-    or W_HasBuff(NA_Player, 1133) or W_HasBuff(NA_Player, 1131) or SpellIsTargeting()) then
+  W_Log(2,"NA_DoAction.....");
+  if(UnitIsDead(NA_Player) or SpellIsTargeting()) then
     W_Log(3,"busy.....");
     return false;
   end
@@ -324,19 +309,11 @@ function NA_DoAction()
   return false;
 end
 
-function NA_SpellInfoType(spellID)
-  if(spellID == nil)then
-    return -1;
-  elseif(strlen(spellID) > 1 and strsub(spellID,0,1) == 'I')then --Item
-    return 2;
-  elseif(strlen(spellID) > 1 and strsub(spellID,0,1) == 'M')then --Macro
-    return 3;
-  elseif(strlen(spellID) > 3 and strsub(spellID,0,3) == 'NA_')then --Function
-    return 4;
-  end
-  return 1;
-end
-
 function NA_getSpellInfo(spellID)
   return NA_ClassInfo[spellID];
+end
+
+
+function NA_getSpellInfoByName(spellname)
+  return NA_ClassInfo[spellname];
 end
