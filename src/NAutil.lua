@@ -5,6 +5,7 @@ NA_Pet = 'pet';
 NA_Focus = 'focus';
 NA_lastMsg = '';
 SpellOutRangeNum  = 0;
+NA_Mana = true;
 function W_Log(level, msg)
   if(level >= NA_LogLevel and not NA_IsTest) then
     if(NA_lastMsg == msg)then 
@@ -45,15 +46,15 @@ end
 function W_SetBinding(no, text, f)
   local key;
   if(no >0 and no<10) then
-    key = "CTRL-"..no;
+    key = ""..no;
   elseif(no == 0) then
     key = "ALT-CTRL-`";
   elseif(no == 10) then
     key = "CTRL-0";
   elseif(no == 11) then
-    key = "CTRL-【";
+    key = "【";
   elseif(no == 12) then
-    key = "CTRL-】";
+    key = "】";
   elseif(no >12 and no<22) then
     key = "ALT-CTRL-"..(no-12);
   elseif(no == 22) then
@@ -71,9 +72,9 @@ function W_SetBinding(no, text, f)
   elseif(no == 36) then
     key = "SHIFT-=";
   elseif(no == 41) then
-    key = "CTRL--";
+    key = "-";
   elseif(no == 42) then
-    key = "CTRL-=";  
+    key = "=";  
   else
     W_Log(4,"W_SetBinding error no: ".. no);
     return;
@@ -240,51 +241,31 @@ function W_isTanking()
   return isTanking;
 end
 
-function NA_Fire(cond, spellID, UnitId, interval)
-  --  if(interval == nil)then
-  --    interval = 0;
-  --    NA_SpellTimes[spellID] = nil;
-  --  end
-  --
-  --  if(NA_SpellTimes[spellID] ~= nil and (GetTime() - NA_SpellTimes[spellID]) < interval)then
-  --    return false;
-  --  end
-  if(spellID == 'NA_fireByOvale')then
-    return NA_fireByOvale();
-  end
-  
-  local spellType = NA_SpellInfoType(spellID)
-  if(cond and spellType == 1 and NA_FireSpell(spellID, UnitId)) then
-    NA_SpellTimes[spellID] = 0;
-    return true;
-  elseif(cond and spellType == 2 and NA_FireItem(spellID, UnitId)) then
-    NA_SpellTimes[spellID] = 0;
-    return true;
-  elseif(cond and spellType == 3 and NA_FireMacro(spellID, UnitId)) then
-    NA_SpellTimes[spellID] = 0;
+function NA_Fire(cond, spellName, UnitId, interval)
+  local spellInfo = NA_getSpellInfoByName(spellName);
+  if(cond and spellInfo ~= nil and NA_FireSpell(spellName, UnitId)) then
+    NA_SpellTimes[spellInfo.spellID] = 0;
     return true;
   end
   return false;
 end
 
-function NA_ChangeDirection(spellID, UnitId)
+function NA_ChangeDirection(spellName, UnitId)
   W_Log(3,"NA_ChangeDirection----start");
-  if (not W_UnitIsVisible(UnitId) or UnitIsDead(UnitId)) then
-    W_Log(3,"NA_ChangeDirection----start");
+  if (not W_UnitIsVisible(UnitId) or UnitIsDead(UnitId) or not UnitCanAttack(NA_Player,NA_Target) or UnitIsPlayer(NA_Target)) then
     NA_ShowVars(44);
     return true;
   elseif (W_UnitIsVisible(UnitId)) then
-    local spellInfo = NA_getSpellInfo(spellID);
+    local spellInfo = NA_getSpellInfoByName(spellName);
     if(spellInfo ~= nil) then 
       local slot = spellInfo.slot;
-      W_Log(3,"NA_ChangeDirection----start"..slot);
-      if (slot ~= nil) then
+      if (slot ~= nil and W_HPlevel(NA_Player) > 0.9) then
         if (IsActionInRange(slot) == 1) then
-          W_Log(3,"NA_ChangeDirection----start"..slot);
+          W_Log(3,"NA_ChangeDirectio4n----start"..slot);
           NA_ToLeft();          
           return true;
         elseif(IsActionInRange(slot) == 0) then
-          W_Log(3,"NA_ChangeDirection----start"..slot);
+          W_Log(3,"NA_ChangeDirection5----start"..slot);
           NA_ShowVars(44);
           return true;
         end 
@@ -297,7 +278,7 @@ end
 
 function NA_ChangeTarget(UnitId)
   W_Log(3,"NA_ChangeTarget----start");
-  if (not W_UnitIsVisible(UnitId) or UnitIsDead(UnitId)) then
+  if (not NA_Eat() or not UnitCanAttack(NA_Player,NA_Target) or not W_UnitIsVisible(UnitId) or UnitIsDead(UnitId) or UnitIsPlayer(NA_Target)) then
     W_Log(3,"NA_ChangeTarget2----start");
     NA_ShowVars(44);
     return true;
@@ -306,9 +287,9 @@ function NA_ChangeTarget(UnitId)
 end
 
 
-function NA_Eat(isMana)
+function NA_Eat()
   W_Log(3,"NA_Eat----start");
-  if (isMana) then 
+  if (NA_Mana) then 
     if(W_HPlevel(NA_Player) < 0.6 and W_Manalevel(NA_Player) < 0.6) then
       NA_ShowVars(43);
       return true;
@@ -328,27 +309,13 @@ function NA_Eat(isMana)
   return false;
 end
 
-function NA_FireSpell(spellID, UnitId)
-  local spellInfo = NA_getSpellInfo(spellID);
-  if(spellInfo ~= nil and spellInfo.keyNo ~= nil and W_IsUsableSpell(spellID, UnitId) and W_UnitIsVisible(UnitId)) then
-    W_Log(3,"NA_FireSpell:" .. spellID .."->"..spellInfo.name..spellInfo.keyNo);
+function NA_FireSpell(spellName, UnitId)
+  W_Log(3,"NA_FireSpell:" .. spellName .."->"..UnitId);
+  local spellInfo = NA_getSpellInfoByName(spellName);
+  if(spellInfo ~= nil and spellInfo.keyNo ~= nil and W_IsUsableSpell(spellName, UnitId) and W_UnitIsVisible(UnitId)) then
     W_UpdateLabelText('NA_SpellLabel', spellInfo.name);
     NA_ShowVars(spellInfo.keyNo);
     AttackTarget();
-    return true;
-  else
-    W_UpdateLabelText('NA_SpellLabel', '');
-    -- W_Log(3,"NA_FireSpell:" .. spellID..'-'..UnitId);
-    return false;
-  end
-end
-
-function NA_FireItem(spellID, UnitId)
-  local spellInfo = NA_getSpellInfo(spellID);
-  if(spellInfo ~= nil and spellInfo.keyNo ~= nil and W_IsUsableItem(spellID, UnitId)) then
-    W_Log(3,"NA_FireItem:" .. spellID .."->"..spellInfo.keyNo);
-    W_UpdateLabelText('NA_SpellLabel', spellInfo.name);
-    NA_ShowVars(spellInfo.keyNo);
     return true;
   else
     W_UpdateLabelText('NA_SpellLabel', '');
@@ -356,19 +323,6 @@ function NA_FireItem(spellID, UnitId)
   end
 end
 
-function NA_FireMacro(spellID, UnitId)
-  local spellInfo = NA_getSpellInfo(spellID);
-  if(spellInfo ~= nil and spellInfo.keyNo ~= nil) then
-    W_Log(3,"NA_FireMacro:" .. spellID .."->"..spellInfo.keyNo);
-    W_UpdateLabelText('NA_SpellLabel', spellInfo.spellID);
-    NA_ShowVars(spellInfo.keyNo);
-    AttackTarget();
-    return true;
-  else
-    W_UpdateLabelText('NA_SpellLabel', '');
-    return false;
-  end
-end
 
 function NA_FireBuffs(buffs, spellID)
   local bufftarget;
@@ -381,19 +335,19 @@ function NA_FireBuffs(buffs, spellID)
   return false;
 end
 
-function NA_targetSpell(buffs, spellID, UnitId, onlyMine)
+function NA_targetSpell(buffs, spellName, UnitId, onlyMine)
   if(onlyMine == nil or onlyMine ~= true)then onlyMine = false; end
-  if(W_checkBuffs(buffs, UnitId, onlyMine)) then return NA_FireSpell(spellID,NA_Target); end
+  if(W_checkBuffs(buffs, UnitId, onlyMine)) then return NA_FireSpell(spellName,NA_Target); end
   return false;
 end
 
-function W_IsUsableSpell(spellID, UnitId)
+function W_IsUsableSpell(spellName, UnitId)
   
-  local spellInfo = NA_getSpellInfo(spellID);
+  local spellInfo = NA_getSpellInfoByName(spellName);
   if(spellInfo == nil)then
     return false;
   end
-  if (W_GetCooldown(1, spellID) <= 1) then
+  if (W_GetCooldown(1, spellName) <= 1) then
     local slot = spellInfo.slot;
     if (slot ~= nil) then
       W_Log(3,"IsActionInRange:"..slot);
@@ -402,18 +356,6 @@ function W_IsUsableSpell(spellID, UnitId)
       return true;
     end
     
-  end
-  return false;
-end
-
-function W_IsUsableItem(spellID, UnitId)
-  local spellInfo = NA_getSpellInfo(spellID);
-  if(spellInfo == nil)then
-    return false;
-  end
-  local isUsable, nomana = IsUsableItem(spellInfo.spellID);
-  if (isUsable == true and nomana == false) then
-    return true;
   end
   return false;
 end
@@ -443,8 +385,8 @@ function W_IsCasting(UnitId)
   return 0;
 end
 
-function W_GetCooldown(type, spellID)
-  local spellInfo = NA_getSpellInfo(spellID);
+function W_GetCooldown(type, spellName)
+  local spellInfo = NA_getSpellInfoByName(spellName);
   local start, duration, enable
   if(type==1)then -- spell
     start, duration, enable = GetSpellCooldown(spellInfo.spellID, BOOKTYPE_SPELL)
@@ -507,11 +449,6 @@ function w_GetComboPoints(unit)
   return UnitPower(unit,4);
 end
 
-function W_SpellEnabled(spellID, UnitId)
-  local spellInfo = NA_getSpellInfo(spellID);
-  return (spellInfo ~= nil and spellInfo.keyNo ~= nil and W_IsUsableSpell(spellID, UnitId) and UnitIsVisible(UnitId));
-end
-
 function W_Send(text, channel)
   SendChatMessage(text,"channel",nil, channel);
 end
@@ -526,17 +463,7 @@ function NA_buy(Item)
   W_Send("求购"..select(1,GetItemInfo(Item))..",有的代价密,谢谢", 2);
 end
 
-function NA_getClassInfoName(spellID)
-  if(spellID == nil)then
-    return nil;
-  end
-  local spellInfo = NA_getSpellInfo(spellID);
-  if(spellInfo ~= nil and spellInfo.name ~= nil)then
-    return spellInfo.name;
-  else
-    return nil;
-  end
-end
+
 
 function NA_ArrayAppend(t1,t2)
   for k in pairs(t2) do
@@ -544,43 +471,6 @@ function NA_ArrayAppend(t1,t2)
   end
   return t1;
 end
-
-function NA_testSpell(spellID, UnitId)
-  local spellInfo = NA_getSpellInfo(spellID);
-  if(spellInfo == nil or spellInfo.keyNo == nil)then return; end
-  print("1-spellInfo.keyNo="..spellInfo.keyNo);
-  print("1.1-NA_SpellInfoType("..spellID..")="..NA_SpellInfoType(spellID));
-
-  local spellInfo = NA_getSpellInfo(spellID);
-  if(spellInfo == nil)then return; end
-  print("2.0-spellInfo.name="..spellInfo.name);
-
-  if(UnitIsVisible(UnitId) == false)then return; end
-  print("3-UnitIsVisible("..UnitId..")==true");
-  if(NA_SpellInfoType(spellID) == 1)then
-    local isUsable, nomana = IsUsableSpell(spellInfo.spellID);
-    print('isUsable='..NA_Bool(isUsable));
-    print('nomana='..NA_Bool(nomana));
-    if (isUsable == true and nomana == false and W_GetCooldown(1, spellID) <= 1) then
-      print("3.1-W_GetCooldown(1, "..spellID..")="..W_GetCooldown(1, spellID));
-      print('SpellHasRange='..NA_Bool(SpellHasRange(spellInfo.name)));
-      print('IsSpellInRange='..NA_Bool(IsSpellInRange(spellInfo.name, UnitId)));
-      if(W_InRange(spellInfo, UnitId)) then
-        print("4-SpellHasRange("..spellInfo.name..")==true");
-        print("5-IsSpellInRange("..spellInfo.name..", "..UnitId..")==true");
-
-        if(W_IsUsableSpell(spellID, UnitId) == false)then return; end
-        print("6-W_IsUsableSpell("..spellID..", "..UnitId..")==true");
-        return;
-      end
-    end
-  end
-
-  --  if(W_IsUsableSpell(spellID, UnitId) == false)then return; end
-  --  print("8-W_IsUsableSpell("..spellID..", "..UnitId..")==true");
-end
---/run NA_testSpell('77758', NA_Player)
---/script print(SpellHasRange())
 
 function W_UnitIsVisible(UnitId)
   if(UnitId == NA_Nil)then
@@ -781,29 +671,3 @@ function NA_isUsableTalentSpell(tier,column)
   return false;
 end
 
-function NA_fireByOvale()
-  return (false
-    or (NA_IsMaxDps and OV_fireAction(4)) --施放第4格法术,爆发技能
-    or (NA_IsAOE and OV_fireAction(3)) -- 施放第3格法术,AOE法术
-    or (not NA_IsAOE and OV_fireAction(2)) --施放第2个法术
-    or (OV_fireAction(1)) --施放第1格法术,短技能卡CD
-    );
-end
-
--- actionTexture, actionInRange, actionCooldownStart, actionCooldownDuration,
---    actionUsable, actionShortcut, actionIsCurrent, actionEnable, actionType, actionId, actionTarget
--- /script print(OV_fireAction(2));
-function OV_fireAction(index)
-  if(Ovale and Ovale["OvaleCompile"] and Ovale["OvaleCompile"].GetIconNodes() and Ovale["OvaleCompile"].GetIconNodes()[index])then 
-    local OvAction = Ovale["OvaleCompile"].GetIconNodes()[index]["child"][1]["result"];
-    if(OvAction ~= nil and OvAction.actionUsable and OvAction.actionEnable == 1)then
-      if(OvAction.actionType == 'spell')then
-        --print(OvAction.actionId.."---"..OvAction.actionTarget);
-        return NA_FireSpell(OvAction.actionId..'', OvAction.actionTarget..'');
-      elseif(OvAction.actionType == "item") then
-        return NA_FireItem(OvAction.actionId, OvAction.actionTarget);
-      end
-    end 
-  end
-  return false;
-end
