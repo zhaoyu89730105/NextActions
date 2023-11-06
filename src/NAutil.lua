@@ -259,7 +259,7 @@ function NA_ChangeDirection(spellName, UnitId)
     local spellInfo = NA_getSpellInfoByName(spellName);
     if(spellInfo ~= nil) then 
       local slot = spellInfo.slot;
-      if (slot ~= nil and W_HPlevel(NA_Player) > 0.9) then
+      if (slot ~= nil and W_HPlevel(NA_Target) == 1) then
         if (IsActionInRange(slot) == 1) then
           W_Log(3,"NA_ChangeDirectio4n----start"..slot);
           NA_ToLeft();          
