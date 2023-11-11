@@ -144,19 +144,21 @@ function NA2Dps()
     elseif(NA_ProfileNo == 0)then --防骑
       
       if(false
+      	  or NA_Eat(true)
 					or NA_Fire(W_TargetCanAttack(), '20271', NA_Target) --审判
 
       )then return true; end
     elseif(NA_ProfileNo == 1)then --惩戒骑
       
       if(false
+      	  or NA_Eat(true)
 					or NA_Fire(W_TargetCanAttack(), '20271', NA_Target) --审判
 
       )then return true; end
     elseif(NA_ProfileNo == 2)then --奶骑
       
       if(false
-
+            or NA_Eat(true)
       )then return true; end
     end
   end

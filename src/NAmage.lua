@@ -15,7 +15,7 @@ NA8ProfileDescriptions = {[0]='天赋:--属性:',[1]='天赋:--属性:',[2]='天
 NA8TestRange =  {[0]='火球术',[1]='火球术',[2]='火球术',};
 function NA8Dps()  
   if(W_IsInCombat())then
-    W_Log(3,"法师 W_IsInCombat");
+    W_Log(2,"法师 W_IsInCombat");
     if(NA_ProfileNo < 0)then return false; --保命施法
     elseif(NA_ProfileNo == 0)then --Arcane
       
@@ -39,7 +39,7 @@ function NA8Dps()
 
     end
     if(W_TargetCanAttack()) then  --攻击施法
-      W_Log(3,"法师 W_TargetCanAttack");
+      W_Log(2,"法师 W_TargetCanAttack");
       if(NA_ProfileNo < 0)then return false;
       elseif(NA_ProfileNo == 0)then --Arcane
         
@@ -100,7 +100,7 @@ function NA8Dps()
       end
     end
   else  --不在战斗中
-    W_Log(3,"脱战后补buff，开怪等");
+    W_Log(2,"脱战后补buff，开怪等");
     if(NA_ProfileNo < 0)then return false; --脱战后补buff，开怪等
     elseif(NA_ProfileNo == 0)then --Arcane
       

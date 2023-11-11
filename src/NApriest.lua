@@ -1,29 +1,28 @@
 function getNA5Actions(no)
   if(no < 0)then return {};
   elseif(no == 0)then
-    return {};
+    return {'治了术'};
   elseif(no == 1)then
-    return {};
+    return {'治了术'};
   elseif(no == 2)then
-    return {'200829','17','589','47540','585'};
+    return {'治了术'};
   end
   return {};
 end
 
 NA5ProfileNames = {[0]='Discipline',[1]='Holy',[2]='Shadow',};
 NA5ProfileDescriptions = {[0]='天赋:--属性:',[1]='天赋:--属性:',[2]='天赋:--属性:',};
+NA5TestRange =  {[0]='治了术',[1]='治了术',[2]='治了术',};
 
 function NA5Dps()
   W_Log(1,"牧师 dps");
-  
-	
-	
-	
   if(W_IsInCombat())then
     if(NA_ProfileNo < 0)then return false; --保命施法
     elseif(NA_ProfileNo == 0)then --Discipline
       
       if(false
+          or NA_Fire(true, '治了术', NA_Target) --火球术
+
 
       )then return true; end
     elseif(NA_ProfileNo == 1)then --Holy
@@ -41,7 +40,8 @@ function NA5Dps()
     if(W_TargetCanAttack()) then  --攻击施法
       if(NA_ProfileNo < 0)then return false;
       elseif(NA_ProfileNo == 0)then --Discipline
-        
+        or NA_Fire(true, '治了术', NA_Target) --火球术
+
 				
         
         if(not NA_IsAOE and (false
@@ -67,11 +67,8 @@ function NA5Dps()
 				
         
         if(not NA_IsAOE and (false
-					or NA_Fire(NA_checkHP(2), '200829', NA_Player) --200829
-					or NA_Fire(NA_checkHP(3), '17', NA_Player) --真言术：盾
-					or NA_Fire(not W_RetainBuff(NA_Target, -589, true), '589', NA_Target) --暗言术：痛
-					or NA_Fire(true, '47540', NA_Target) --47540
-					or NA_Fire(true, '585', NA_Target) --惩击
+					   or NA_Fire(true, '治了术', NA_Target) --火球术
+
 
         ))then return true; end
 
@@ -106,17 +103,19 @@ function NA5Dps()
     elseif(NA_ProfileNo == 0)then --Discipline
       
       if(false
-
+          or NA_Eat(true)
       )then return true; end
     elseif(NA_ProfileNo == 1)then --Holy
       
-      if(false
+      if(false 
+          or NA_Eat(true)
 
       )then return true; end
     elseif(NA_ProfileNo == 2)then --Shadow
       
       if(false
-					or NA_Fire(NA_IsSolo and W_TargetCanAttack(), '589', NA_Target) --暗言术：痛
+          or NA_Eat(true)
+          or NA_Fire(true, '治了术', NA_Target) --火球术
 
       )then return true; end
     end
