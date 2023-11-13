@@ -22,6 +22,7 @@ function NA_init()
     NA_Config = {NA_ProfileNo=0, NA_MyUI=false};
   end
   W_SetBinding(0, "NA_Toggle", 3);
+  W_Log(3, "NA_init1111111111111111111:");
 
   NA_InitProfile(NA_Config.NA_ProfileNo);
 
@@ -62,6 +63,7 @@ function NA_initClassData(className, profileNo)
     NA_ProfileName = NA5ProfileNames[profileNo];
     NA_MaxDps = NA5Dps;
     NA_ProfileNames = NA5ProfileNames;
+    NA_TestRangeSpellID = NA5TestRange[profileNo];
     NA_ProfileDescriptions = NA5ProfileDescriptions;
   elseif(className == "DEATHKNIGHT") then
     NA_Actions = getNA6Actions(profileNo);
@@ -89,6 +91,7 @@ function NA_initClassData(className, profileNo)
     NA_MaxDps = NA9Dps;
     NA_ProfileNames = NA9ProfileNames;
     NA_ProfileDescriptions = NA9ProfileDescriptions;
+    NA_TestRangeSpellID = NA9TestRange[profileNo];
   elseif(className == "MONK") then
     NA_Actions = getNA10Actions(profileNo);
     NA_ProfileName = NA10ProfileNames[profileNo];
@@ -142,7 +145,7 @@ end
 function NA_InitClass()
   NA_ClassInfo = {}, {};
   --51:spell1/buff2/item3/marco4, 52:buff/debuff
-  W_Log(2, "init NA_ClassInfo");
+  W_Log(3, "init NA_ClassInfo");
   W_Log(2, "init NA_Actions");
 
   local no=0;
@@ -151,11 +154,16 @@ function NA_InitClass()
       local spellID, rank, tmpRankNum;
       for i = 1, GetNumSpellTabs(), 1 do
         local name, texture, offset, numSpells = GetSpellTabInfo(i);
+        W_Log(3,"NA_InitClass2: "..name);
         for y = 1, numSpells, 1 do
           local spellName, tmpRankName = GetSpellName(offset+y, BOOKTYPE_SPELL);
+          W_Log(3,"NA_InitClass3: "..spellName);
           if (tmpRankName ~= nil) then
+            W_Log(3,"NA_InitClass3: "..spellName..tmpRankName);
             local tmpRank = string.find(tmpRankName, "(%d+)");
             if (spellName == v and tmpRank ~=nil and (rank == nil  or rank < tonumber(tmpRank))) then
+               W_Log(3,"NA_InitClass3: "..spellName..tmpRank);
+
               spellID = y+offset;
               rank = tonumber(tmpRank);
               tmpRankNum = tmpRank;
@@ -164,9 +172,9 @@ function NA_InitClass()
         end        
       end
 
-      W_Log(2,"NA_InitClass: "..v.."("..rank..")"..spellID);
       local spellTexture = GetSpellTexture(spellID, BOOKTYPE_SPELL);
       local spellslot = nil;
+      W_Log(3,"NA_InitClass: "..v.."("..rank..")"..spellID..spellTexture);
       for slot = 1, 120 do
         local thisTexture = GetActionTexture(slot)
         if (thisTexture == spellTexture) then
@@ -184,6 +192,7 @@ function NA_InitClass()
         NA_ClassInfo[v]['rank'] = rank;
         NA_ClassInfo[v]['slot'] = spellslot;
         NA_ClassInfo[v]['keyNo'] = no;
+        NA_ClassInfo[v]['texture'] = spellTexture;
         W_SetBinding(no, NA_ClassInfo[v].name, 1);
       end
     end
@@ -275,12 +284,13 @@ function NA_OnEvent(event)
       NA_MyUI();
     end
   end
+
   if(NA_IsRunning ~= nil and NA_IsRunning == false) then
-    W_Log(3,"NA_IsRunning.....");
+    W_Log(2,"NA_IsRunning.....");
   end
   
   if(NA_IsRunning ~= nil and NA_IsRunning == true and not NA_DoAction()) then
-     W_Log(3,"NA_ClearActions.....");
+     W_Log(2,"NA_ClearActions.....");
     --NA_ClearAction();
   end
   W_Log(2,"NA_OnEvent end");

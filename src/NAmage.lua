@@ -1,7 +1,7 @@
 function getNA8Actions(no)
   if(no < 0)then return {};
   elseif(no == 0)then
-    return {'霜甲术','火焰冲击','火球术'};
+    return {'霜甲术','火球术'};
   elseif(no == 1)then
     return {'霜甲术','火球术'};
   elseif(no == 2)then
@@ -20,7 +20,7 @@ function NA8Dps()
     elseif(NA_ProfileNo == 0)then --Arcane
       
       if(false
-           or NA_Fire(true, '火焰冲击', NA_Target) --火球术
+           --or NA_Fire(true, '火焰冲击', NA_Target) --火球术
            or NA_Fire(true, '火球术', NA_Target) --火球术
       )then return true; end
     elseif(NA_ProfileNo == 1)then --Frost

@@ -1,18 +1,18 @@
 function getNA5Actions(no)
   if(no < 0)then return {};
   elseif(no == 0)then
-    return {'治了术'};
+    return {'次级治疗术'};
   elseif(no == 1)then
-    return {'治了术'};
+    return {'次级治疗术'};
   elseif(no == 2)then
-    return {'治了术'};
+    return {'次级治疗术'};
   end
   return {};
 end
 
 NA5ProfileNames = {[0]='Discipline',[1]='Holy',[2]='Shadow',};
 NA5ProfileDescriptions = {[0]='天赋:--属性:',[1]='天赋:--属性:',[2]='天赋:--属性:',};
-NA5TestRange =  {[0]='治了术',[1]='治了术',[2]='治了术',};
+NA5TestRange =  {[0]='次级治疗术',[1]='次级治疗术',[2]='次级治疗术',};
 
 function NA5Dps()
   W_Log(1,"牧师 dps");
@@ -21,7 +21,7 @@ function NA5Dps()
     elseif(NA_ProfileNo == 0)then --Discipline
       
       if(false
-          or NA_Fire(true, '治了术', NA_Target) --火球术
+          or NA_Fire(true, '次级治疗术', NA_Target) --火球术
 
 
       )then return true; end
@@ -40,11 +40,12 @@ function NA5Dps()
     if(W_TargetCanAttack()) then  --攻击施法
       if(NA_ProfileNo < 0)then return false;
       elseif(NA_ProfileNo == 0)then --Discipline
-        or NA_Fire(true, '治了术', NA_Target) --火球术
+        
 
 				
         
         if(not NA_IsAOE and (false
+          or NA_Fire(true, '次级治疗术', NA_Target) --火球术
 
         ))then return true; end
 
@@ -67,7 +68,7 @@ function NA5Dps()
 				
         
         if(not NA_IsAOE and (false
-					   or NA_Fire(true, '治了术', NA_Target) --火球术
+					   or NA_Fire(true, '次级治疗术', NA_Target) --火球术
 
 
         ))then return true; end
@@ -115,7 +116,7 @@ function NA5Dps()
       
       if(false
           or NA_Eat(true)
-          or NA_Fire(true, '治了术', NA_Target) --火球术
+          or NA_Fire(true, '次级治疗术', NA_Target) --火球术
 
       )then return true; end
     end

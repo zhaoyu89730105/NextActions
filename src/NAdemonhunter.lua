@@ -9,7 +9,7 @@ function getNA12Actions(no)
 end
 
 NA12ProfileNames = {[0]='浩劫',[1]='复仇',};
-NA12ProfileDescriptions = {[0]='天赋:2233321--属性:暴击>精通>全能>=急速',[1]='天赋:--属性:',};
+NA12ProfileDescriptions = {[0]='天赋:--属性:暴击>精通>全能>=急速',[1]='天赋:--属性:',};
 
 function NA12Dps()
   W_Log(1,"恶魔猎手 dps");

@@ -11,7 +11,7 @@ function getNA3Actions(no)
 end
 
 NA3ProfileNames = {[0]='兽王猎',[1]='射击猎',[2]='生存猎',};
-NA3ProfileDescriptions = {[0]='天赋:3112112--属性:急速>暴击>精通>全能',[1]='天赋:--属性:',[2]='天赋:--属性:溅射>暴击≈全能>精通>急速',};
+NA3ProfileDescriptions = {[0]='天赋:--属性:急速>暴击>精通>全能',[1]='天赋:--属性:',[2]='天赋:--属性:溅射>暴击≈全能>精通>急速',};
 
 function NA3Dps()
   W_Log(1,"猎人 dps");

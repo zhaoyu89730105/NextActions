@@ -127,6 +127,23 @@ function W_UnitBuff(isBuff, UnitId, i)
   end
 end
 
+function W_UnitBuffBySpellName(isBuff, UnitId, spellName)
+  local spellInfo = NA_getSpellInfoByName(spellName);
+  for i = 1, 22 do
+    local name;
+    if(isBuff)then
+      name = UnitBuff(UnitId, i);
+    else
+      name = UnitDebuff(UnitId, i);
+    end
+    if (name ~= nil and name == spellInfo.texture) then
+      return true;
+    end
+  end  
+  return false;
+end
+
+
 --buffID>0:buff; buffID<0:debuff
 function W_getBuff(UnitId, buffID, onlyMine)
   local i=1;
@@ -251,7 +268,7 @@ function NA_Fire(cond, spellName, UnitId, interval)
 end
 
 function NA_ChangeDirection(spellName, UnitId)
-  W_Log(3,"NA_ChangeDirection----start");
+  W_Log(2,"NA_ChangeDirection----start");
   if (not W_UnitIsVisible(UnitId) or UnitIsDead(UnitId) or not UnitCanAttack(NA_Player,NA_Target) or UnitIsPlayer(NA_Target)) then
     NA_ShowVars(44);
     return true;
@@ -261,11 +278,11 @@ function NA_ChangeDirection(spellName, UnitId)
       local slot = spellInfo.slot;
       if (slot ~= nil and W_HPlevel(NA_Target) == 1) then
         if (IsActionInRange(slot) == 1) then
-          W_Log(3,"NA_ChangeDirectio4n----start"..slot);
+          W_Log(2,"NA_ChangeDirectio4n----start"..slot);
           NA_ToLeft();          
           return true;
         elseif(IsActionInRange(slot) == 0) then
-          W_Log(3,"NA_ChangeDirection5----start"..slot);
+          W_Log(2,"NA_ChangeDirection5----start"..slot);
           NA_ShowVars(44);
           return true;
         end 
@@ -277,9 +294,9 @@ end
 
 
 function NA_ChangeTarget(UnitId)
-  W_Log(3,"NA_ChangeTarget----start");
+  W_Log(2,"NA_ChangeTarget----start");
   if (not NA_Eat() or not UnitCanAttack(NA_Player,NA_Target) or not W_UnitIsVisible(UnitId) or UnitIsDead(UnitId) or UnitIsPlayer(NA_Target)) then
-    W_Log(3,"NA_ChangeTarget2----start");
+    W_Log(2,"NA_ChangeTarget2----start");
     NA_ShowVars(44);
     return true;
   end 
@@ -288,7 +305,7 @@ end
 
 
 function NA_Eat()
-  W_Log(3,"NA_Eat----start");
+  W_Log(2,"NA_Eat----start");
   if (NA_Mana) then 
     if(W_HPlevel(NA_Player) < 0.6 and W_Manalevel(NA_Player) < 0.6) then
       NA_ShowVars(43);
@@ -315,7 +332,7 @@ function NA_FireSpell(spellName, UnitId)
   if(spellInfo ~= nil and spellInfo.keyNo ~= nil and W_IsUsableSpell(spellName, UnitId) and W_UnitIsVisible(UnitId)) then
     W_UpdateLabelText('NA_SpellLabel', spellInfo.name);
     NA_ShowVars(spellInfo.keyNo);
-    AttackTarget();
+    --AttackTarget();
     return true;
   else
     W_UpdateLabelText('NA_SpellLabel', '');
@@ -342,7 +359,8 @@ function NA_targetSpell(buffs, spellName, UnitId, onlyMine)
 end
 
 function W_IsUsableSpell(spellName, UnitId)
-  
+  W_Log(3,"IsActionInRange:start");
+
   local spellInfo = NA_getSpellInfoByName(spellName);
   if(spellInfo == nil)then
     return false;
@@ -357,6 +375,8 @@ function W_IsUsableSpell(spellName, UnitId)
     end
     
   end
+  W_Log(3,"IsActionInRange:end");
+
   return false;
 end
 
@@ -368,7 +388,7 @@ function W_IsCasting(UnitId)
     elseif(endTime ~= nil)then
       return endTime/1000 - GetTime();
     end
-    W_Log(3,"W_IsCasting1 ".. startTime.."--"..endTime);
+    W_Log(2,"W_IsCasting1 ".. startTime.."--"..endTime);
     return 999;
   end
 
@@ -379,7 +399,7 @@ function W_IsCasting(UnitId)
     elseif(endTime ~= nil)then
       return endTime/1000 - GetTime() + 0.8;
     end
-    W_Log(3,"W_IsCasting2 ".. startTime.."--"..endTime);
+    W_Log(2,"W_IsCasting2 ".. startTime.."--"..endTime);
     return 999;
   end
   return 0;

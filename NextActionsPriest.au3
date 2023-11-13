@@ -9,7 +9,7 @@ Global Const $box_x = 0, $box_y = 0, $box_w = 16, $box_h = 16, $box_count = 1
 While 1
 	WinWaitActive("魔兽世界")
 	NAExecute()
-	sleep(random(200,400))
+	sleep(random(1600,2300))
 WEnd
 
 Func TogglePause()
@@ -93,12 +93,16 @@ Func NAExecute()
 		Send("^z");
 		sleep(random(100,300));
 		Send("^x");
+		sleep(random(100,300));
+		Send("^c");
 	Case 42
 		Send("=");
 		sleep(random(14000,16000));
 		Send("^z");
 		sleep(random(100,300));
 		Send("^x");
+		sleep(random(100,300));
+		Send("^c");
 	Case 43
 		Send("-");
 		sleep(random(1100,1300));
@@ -107,9 +111,19 @@ Func NAExecute()
 		Send("^z");
 		sleep(random(100,300));
 		Send("^x");
+		sleep(random(100,300));
+		Send("^c");
 	Case 44
+		Send("^z");
+		sleep(random(100,300));
+		Send("^x");
+		sleep(random(100,300));
 	    Send("^c");
 	Case 45
+		Send("^z");
+		sleep(random(100,300));
+		Send("^x");
+		sleep(random(100,300));
 		Send("^c");
 	Case 100	
 		Send("+T");
